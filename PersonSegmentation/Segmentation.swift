@@ -13,7 +13,7 @@ import Vision
 
 protocol SegmentationWorkerDelegate: AnyObject {
     func segmentation(_ worker: SegmentationWorker, didFailWithError: Error)
-    func segmentation(_ worker: SegmentationWorker, didUpdateProgress: Double, preview: NSImage)
+    func segmentation(_ worker: SegmentationWorker, didUpdateProgress: Double, preview: NSImage, transform: CGAffineTransform)
     func segmentationDidFinish(_ worker: SegmentationWorker)
 }
 
@@ -22,8 +22,16 @@ enum SegmentationWorkerError: Error {
     case unableToInitializeCompressionSession
     case unableToCreateMetalDevice
     case unableToCreateTextureCache
+    case failedToStartReading
+    case failedToStartWriting
+    case failedToRead
+    case readingCancelled
+    case inconsistentState
     case missingFrameImageBuffer
     case missingSegmentationResult
+    case unableToConvertImageToPixelBuffer
+    case encoderFailed(OSStatus)
+    case failedToWrite(AVAssetWriter.Status)
 }
 
 // FIXME: Memory usage
@@ -53,7 +61,9 @@ final class SegmentationWorker {
     private(set) var isRunning: Bool = false
 
     private let videoSize: CGSize
-    private let videoDuration: Double
+    private let videoDuration: Double // seconds
+    private let frameDuration: CMTime
+    private let videoTransform: CGAffineTransform
 
     private let inputReader: AVAssetReader
     private let inputVideoReader: AVAssetReaderTrackOutput
@@ -88,16 +98,21 @@ final class SegmentationWorker {
 
         self.videoDuration = CMTimeGetSeconds(inputAsset.duration)
 
+        // FIXME: We're assuming constant frame-rate, for some reason each frame's CMSampleBuffer duration is always invalid
+        self.frameDuration = videoTrack.minFrameDuration
+
         let videoTransform = videoTrack.preferredTransform
-        let videoRotation = atan2(videoTransform.b, videoTransform.a)
+        self.videoTransform = videoTransform
+
+//        let videoRotation = atan2(videoTransform.b, videoTransform.a)
 
         let videoSize: CGSize = {
-            switch Int(videoRotation * 180.0/Double.pi) {
-            case -90, 90:
-                return CGSize(width: videoTrack.naturalSize.height, height: videoTrack.naturalSize.width)
-            default:
+//            switch Int(videoRotation * 180.0/Double.pi) {
+//            case -90, 90:
+//                return CGSize(width: videoTrack.naturalSize.height, height: videoTrack.naturalSize.width)
+//            default:
                 return videoTrack.naturalSize
-            }
+//            }
         }()
 
         let inputVideoTrackOutput = AVAssetReaderTrackOutput(
@@ -131,7 +146,10 @@ final class SegmentationWorker {
             sourceFormatHint: format
         )
 
+        outputVideoWriter.expectsMediaDataInRealTime = true
         outputWriter.add(outputVideoWriter)
+
+        outputVideoWriter.transform = videoTransform
 
         self.outputWriter = outputWriter
         self.outputVideoWriter = outputVideoWriter
@@ -186,12 +204,12 @@ final class SegmentationWorker {
 
         let planeSize: CGSize
 
-        // Check this...
-        if videoTrack.naturalSize.width > videoTrack.naturalSize.height {
+        // TODO: Check this...
+//        if videoTrack.naturalSize.width > videoTrack.naturalSize.height {
             planeSize = CGSize(width: 2 * (videoTrack.naturalSize.width/videoTrack.naturalSize.height), height: 2)
-        } else {
-            planeSize = CGSize(width: 2, height: 2 * (videoTrack.naturalSize.height/videoTrack.naturalSize.width))
-        }
+//        } else {
+//            planeSize = CGSize(width: 2, height: 2 * (videoTrack.naturalSize.height/videoTrack.naturalSize.width))
+//        }
 
         let planeNode = Helpers.makePlane(size: planeSize, distance: 1)
 
@@ -199,7 +217,7 @@ final class SegmentationWorker {
             .surface: Shaders.maskShader
         ]
 
-        planeNode.eulerAngles.z = -videoRotation
+//        planeNode.eulerAngles.z = -videoRotation
 
         cameraNode.addChildNode(planeNode)
         renderer.scene = scene
@@ -215,8 +233,17 @@ final class SegmentationWorker {
     func start() {
         guard !isRunning else { return }
         self.isRunning = true
-        inputReader.startReading()
-        outputWriter.startWriting()
+
+        guard inputReader.startReading() else {
+            delegate?.segmentation(self, didFailWithError: SegmentationWorkerError.failedToStartReading)
+            return
+        }
+
+        guard outputWriter.startWriting() else {
+            delegate?.segmentation(self, didFailWithError: SegmentationWorkerError.failedToStartWriting)
+            return
+        }
+
         outputWriter.startSession(atSourceTime: .zero)
         processNextSample()
     }
@@ -227,8 +254,7 @@ final class SegmentationWorker {
             return
         }
 
-        let presentationTimeStamp = nextSampleBuffer.presentationTimeStamp
-        let duration = nextSampleBuffer.duration
+        let presentationTimeStamp = nextSampleBuffer.outputPresentationTimeStamp
 
         let requestHandler = VNImageRequestHandler(cmSampleBuffer: nextSampleBuffer, options: [:])
 
@@ -264,30 +290,72 @@ final class SegmentationWorker {
 
             // Encoding and writing frame
 
-            // TODO: Implement
-
-            let progress = CMTimeGetSeconds(presentationTimeStamp)/videoDuration
-
-            delegate?.segmentation(self, didUpdateProgress: progress, preview: result)
-
-            DispatchQueue.main.async { [weak self] in
-                self?.processNextSample()
+            guard let resultPixelBuffer = Helpers.pixelBuffer(from: result) else {
+                throw SegmentationWorkerError.unableToConvertImageToPixelBuffer
             }
 
+            VTCompressionSessionEncodeFrame(
+                compressionSession,
+                imageBuffer: resultPixelBuffer,
+                presentationTimeStamp: presentationTimeStamp,
+                duration: frameDuration,
+                frameProperties: nil,
+                infoFlagsOut: nil,
+                outputHandler: { [weak self] status, infoFlags, sampleBuffer in
+                    DispatchQueue.main.async { [weak self] in
+                        guard let self = self else { return }
+
+                        guard case .writing = self.outputWriter.status else {
+                            return
+                        }
+
+                        if let sampleBuffer = sampleBuffer {
+                            if !self.outputVideoWriter.append(sampleBuffer) {
+                                self.delegate?.segmentation(self, didFailWithError: SegmentationWorkerError.failedToWrite(self.outputWriter.status))
+                            }
+                        } else {
+                            self.delegate?.segmentation(self, didFailWithError: SegmentationWorkerError.encoderFailed(status))
+                        }
+                    }
+                }
+            )
+
+            let progress = CMTimeGetSeconds(presentationTimeStamp)/self.videoDuration
+
+            DispatchQueue.main.async { [weak self] in
+                guard let self = self else { return }
+                self.delegate?.segmentation(self, didUpdateProgress: progress, preview: result, transform: self.videoTransform)
+                self.processNextSample()
+            }
         } catch {
-            self.delegate?.segmentation(self, didFailWithError: error)
+            delegate?.segmentation(self, didFailWithError: error)
         }
     }
 
     private func didFinishProcessing() {
-        VTCompressionSessionInvalidate(compressionSession)
-        outputVideoWriter.markAsFinished()
-        outputWriter.finishWriting(completionHandler: { [weak self] in
-            DispatchQueue.main.async { [weak self] in
-                guard let self = self else { return }
-                self.delegate?.segmentationDidFinish(self)
-            }
-        })
+        switch inputReader.status {
+        case .failed:
+            delegate?.segmentation(self, didFailWithError: SegmentationWorkerError.failedToRead)
+            return
+        case .cancelled:
+            delegate?.segmentation(self, didFailWithError: SegmentationWorkerError.readingCancelled)
+        case .completed:
+            VTCompressionSessionInvalidate(compressionSession)
+            outputVideoWriter.markAsFinished()
+
+            // Consider waiting for the remaining frames...
+            outputWriter.finishWriting(completionHandler: { [weak self] in
+                DispatchQueue.main.async { [weak self] in
+                    guard let self = self else { return }
+                    self.delegate?.segmentationDidFinish(self)
+                }
+            })
+        case .unknown, .reading:
+            fallthrough
+        @unknown default:
+            // This shouldn't happen
+            delegate?.segmentation(self, didFailWithError: SegmentationWorkerError.inconsistentState)
+        }
     }
 }
 
@@ -365,6 +433,57 @@ struct Helpers {
         color.drawSwatch(in: NSRect(origin: .zero, size: size))
         image.unlockFocus()
         return image
+    }
+
+    static func pixelBuffer(from image: NSImage) -> CVPixelBuffer? {
+        let width = image.size.width
+        let height = image.size.height
+
+        let attrs = [
+            kCVPixelBufferCGImageCompatibilityKey: kCFBooleanTrue,
+            kCVPixelBufferCGBitmapContextCompatibilityKey: kCFBooleanTrue
+        ] as CFDictionary
+
+        var pixelBuffer: CVPixelBuffer?
+
+        let status = CVPixelBufferCreate(
+            kCFAllocatorDefault,
+            Int(width),
+            Int(height),
+            kCVPixelFormatType_32ARGB,
+            attrs,
+            &pixelBuffer
+        )
+
+        guard let resultPixelBuffer = pixelBuffer, status == kCVReturnSuccess else {
+            return nil
+        }
+
+        CVPixelBufferLockBaseAddress(resultPixelBuffer, CVPixelBufferLockFlags(rawValue: 0))
+        let pixelData = CVPixelBufferGetBaseAddress(resultPixelBuffer)
+
+        let rgbColorSpace = CGColorSpaceCreateDeviceRGB()
+
+        guard let context = CGContext(
+            data: pixelData,
+            width: Int(width),
+            height: Int(height),
+            bitsPerComponent: 8,
+            bytesPerRow: CVPixelBufferGetBytesPerRow(resultPixelBuffer),
+            space: rgbColorSpace,
+            bitmapInfo: CGImageAlphaInfo.noneSkipFirst.rawValue
+        ) else {
+            return nil
+        }
+
+        let graphicsContext = NSGraphicsContext(cgContext: context, flipped: false)
+        NSGraphicsContext.saveGraphicsState()
+        NSGraphicsContext.current = graphicsContext
+        image.draw(in: CGRect(x: 0, y: 0, width: width, height: height))
+        NSGraphicsContext.restoreGraphicsState()
+
+        CVPixelBufferUnlockBaseAddress(resultPixelBuffer, CVPixelBufferLockFlags(rawValue: 0))
+        return resultPixelBuffer
     }
 }
 

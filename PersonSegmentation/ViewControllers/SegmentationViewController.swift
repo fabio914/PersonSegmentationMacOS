@@ -41,9 +41,18 @@ extension SegmentationViewController: SegmentationWorkerDelegate {
         dismiss(self)
     }
 
-    func segmentation(_ worker: SegmentationWorker, didUpdateProgress progress: Double, preview: NSImage) {
+    func segmentation(
+        _ worker: SegmentationWorker,
+        didUpdateProgress progress: Double,
+        preview: NSImage,
+        transform: CGAffineTransform
+    ) {
         progresssIndicator.doubleValue = progress
         previewImageView.image = preview
+
+        previewImageView.layer?.position = CGPoint(x: NSMidX(previewImageView.frame), y: NSMidY(previewImageView.frame))
+        previewImageView.layer?.anchorPoint = CGPoint(x: 0.5, y: 0.5)
+        previewImageView.layer?.transform = CATransform3DMakeRotation(-(atan2(transform.b, transform.a)), 0, 0, 1)
     }
 
     func segmentationDidFinish(_ worker: SegmentationWorker) {
