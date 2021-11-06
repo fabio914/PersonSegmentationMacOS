@@ -56,15 +56,23 @@
 		EF1DEF9D2736C4B100CE6975 /* PersonSegmentation */ = {
 			isa = PBXGroup;
 			children = (
+				EF1DEFB32736F95600CE6975 /* ViewControllers */,
 				EF1DEF9E2736C4B100CE6975 /* AppDelegate.swift */,
-				EF1DEFA02736C4B100CE6975 /* ViewController.swift */,
 				EF1DEFA22736C4B200CE6975 /* Assets.xcassets */,
 				EF1DEFA42736C4B200CE6975 /* Main.storyboard */,
 				EF1DEFA72736C4B200CE6975 /* PersonSegmentation.entitlements */,
 				EF1DEFAD2736D7C300CE6975 /* Segmentation.swift */,
-				EF1DEFAF2736DBB100CE6975 /* SegmentationViewController.swift */,
 			);
 			path = PersonSegmentation;
+			sourceTree = "<group>";
+		};
+		EF1DEFB32736F95600CE6975 /* ViewControllers */ = {
+			isa = PBXGroup;
+			children = (
+				EF1DEFA02736C4B100CE6975 /* ViewController.swift */,
+				EF1DEFAF2736DBB100CE6975 /* SegmentationViewController.swift */,
+			);
+			path = ViewControllers;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */

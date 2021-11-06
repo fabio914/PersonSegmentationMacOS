@@ -16,6 +16,7 @@ final class SegmentationViewController: NSViewController {
         super.viewDidLoad()
         progresssIndicator.startAnimation(self)
         segmentationWorker?.delegate = self
+        segmentationWorker?.start()
     }
 
     override var representedObject: Any? {
@@ -27,4 +28,15 @@ final class SegmentationViewController: NSViewController {
 
 extension SegmentationViewController: SegmentationWorkerDelegate {
 
+    func segmentation(_ worker: SegmentationWorker, didFailWithError: Error) {
+
+    }
+
+    func segmentation(_ worker: SegmentationWorker, didUpdateProgress: Double) {
+
+    }
+
+    func segmentationDidFinish(_ worker: SegmentationWorker) {
+
+    }
 }
