@@ -13,7 +13,7 @@ import Vision
 
 protocol SegmentationWorkerDelegate: AnyObject {
     func segmentation(_ worker: SegmentationWorker, didFailWithError: Error)
-    func segmentation(_ worker: SegmentationWorker, didUpdateProgress: Double)
+    func segmentation(_ worker: SegmentationWorker, didUpdateProgress: Double, preview: NSImage)
     func segmentationDidFinish(_ worker: SegmentationWorker)
 }
 
@@ -48,10 +48,13 @@ final class SegmentationWorker {
     }
 
     weak var delegate: SegmentationWorkerDelegate?
+    let outputURL: URL
 
     private(set) var isRunning: Bool = false
 
     private let videoSize: CGSize
+    private let videoDuration: Double
+
     private let inputReader: AVAssetReader
     private let inputVideoReader: AVAssetReaderTrackOutput
 
@@ -83,9 +86,19 @@ final class SegmentationWorker {
             throw SegmentationWorkerError.missingVideoTrack
         }
 
-        let videoSize = videoTrack.naturalSize
+        self.videoDuration = CMTimeGetSeconds(inputAsset.duration)
 
-        // FIXME: Rotate video
+        let videoTransform = videoTrack.preferredTransform
+        let videoRotation = atan2(videoTransform.b, videoTransform.a)
+
+        let videoSize: CGSize = {
+            switch Int(videoRotation * 180.0/Double.pi) {
+            case -90, 90:
+                return CGSize(width: videoTrack.naturalSize.height, height: videoTrack.naturalSize.width)
+            default:
+                return videoTrack.naturalSize
+            }
+        }()
 
         let inputVideoTrackOutput = AVAssetReaderTrackOutput(
             track: videoTrack,
@@ -102,6 +115,7 @@ final class SegmentationWorker {
 
         // MARK: - Configuring Output:
 
+        self.outputURL = outputURL
         let outputWriter = try AVAssetWriter(outputURL: outputURL, fileType: .mp4)
 
         let format = try CMFormatDescription(
@@ -177,6 +191,8 @@ final class SegmentationWorker {
             .surface: Shaders.maskShader
         ]
 
+//        planeNode.eulerAngles.z = -videoRotation
+
         cameraNode.addChildNode(planeNode)
         renderer.scene = scene
 
@@ -231,7 +247,6 @@ final class SegmentationWorker {
             let luma = Helpers.texture(from: pixelBuffer, format: .r8Unorm, planeIndex: 0, textureCache: metalTextureCache)
             let chroma = Helpers.texture(from: pixelBuffer, format: .rg8Unorm, planeIndex: 1, textureCache: metalTextureCache)
 
-
             framePlaneNode.geometry?.firstMaterial?.transparent.contents = luma
             framePlaneNode.geometry?.firstMaterial?.diffuse.contents = chroma
             framePlaneNode.geometry?.firstMaterial?.specular.contents = backgroundImage
@@ -239,10 +254,13 @@ final class SegmentationWorker {
 
             let result = sceneRenderer.snapshot(atTime: 0, with: videoSize, antialiasingMode: SCNAntialiasingMode.none)
 
-
             // Encoding and writing frame
 
             // TODO: Implement
+
+            let progress = CMTimeGetSeconds(presentationTimeStamp)/videoDuration
+
+            delegate?.segmentation(self, didUpdateProgress: progress, preview: result)
 
             DispatchQueue.main.async { [weak self] in
                 self?.processNextSample()
@@ -257,8 +275,10 @@ final class SegmentationWorker {
         VTCompressionSessionInvalidate(compressionSession)
         outputVideoWriter.markAsFinished()
         outputWriter.finishWriting(completionHandler: { [weak self] in
-            guard let self = self else { return }
-            self.delegate?.segmentationDidFinish(self)
+            DispatchQueue.main.async { [weak self] in
+                guard let self = self else { return }
+                self.delegate?.segmentationDidFinish(self)
+            }
         })
     }
 }
@@ -310,7 +330,7 @@ struct Helpers {
         let width =  CVPixelBufferGetWidthOfPlane(pixelBuffer, planeIndex)
         let height = CVPixelBufferGetHeightOfPlane(pixelBuffer, planeIndex)
 
-        var textureRef : CVMetalTexture?
+        var textureRef: CVMetalTexture?
 
         let result = CVMetalTextureCacheCreateTextureFromImage(
             nil,

@@ -264,19 +264,36 @@
             <objects>
                 <viewController storyboardIdentifier="SegmentationViewController" id="YN5-GY-y01" customClass="SegmentationViewController" customModule="PersonSegmentation" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="ZhN-WO-fyL">
-                        <rect key="frame" x="0.0" y="0.0" width="100" height="100"/>
+                        <rect key="frame" x="0.0" y="0.0" width="240" height="280"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
-                            <progressIndicator maxValue="100" indeterminate="YES" style="spinning" translatesAutoresizingMaskIntoConstraints="NO" id="UdP-He-vKV">
-                                <rect key="frame" x="34" y="34" width="32" height="32"/>
+                            <progressIndicator maxValue="1" style="bar" translatesAutoresizingMaskIntoConstraints="NO" id="UdP-He-vKV">
+                                <rect key="frame" x="20" y="19" width="200" height="22"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="20" id="pPY-TJ-3f1"/>
+                                </constraints>
                             </progressIndicator>
+                            <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="FNn-Qo-rHG">
+                                <rect key="frame" x="20" y="60" width="200" height="200"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="200" id="FCO-17-MMI"/>
+                                    <constraint firstAttribute="width" constant="200" id="r3m-MS-Xqo"/>
+                                </constraints>
+                                <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyUpOrDown" id="7P3-wh-Jia"/>
+                            </imageView>
                         </subviews>
                         <constraints>
-                            <constraint firstItem="UdP-He-vKV" firstAttribute="centerX" secondItem="ZhN-WO-fyL" secondAttribute="centerX" id="ALw-t7-Ycy"/>
-                            <constraint firstItem="UdP-He-vKV" firstAttribute="centerY" secondItem="ZhN-WO-fyL" secondAttribute="centerY" id="NPT-58-v43"/>
+                            <constraint firstAttribute="trailing" secondItem="UdP-He-vKV" secondAttribute="trailing" constant="20" id="4sS-DM-p5W"/>
+                            <constraint firstItem="UdP-He-vKV" firstAttribute="leading" secondItem="ZhN-WO-fyL" secondAttribute="leading" constant="20" id="7wr-jV-dew"/>
+                            <constraint firstAttribute="trailing" secondItem="FNn-Qo-rHG" secondAttribute="trailing" constant="20" id="EoC-5c-duo"/>
+                            <constraint firstItem="FNn-Qo-rHG" firstAttribute="leading" secondItem="ZhN-WO-fyL" secondAttribute="leading" constant="20" id="V6c-oj-6QT"/>
+                            <constraint firstItem="FNn-Qo-rHG" firstAttribute="top" secondItem="ZhN-WO-fyL" secondAttribute="top" constant="20" id="ak5-oU-V6M"/>
+                            <constraint firstAttribute="bottom" secondItem="UdP-He-vKV" secondAttribute="bottom" constant="20" id="bIr-Wb-ueA"/>
+                            <constraint firstItem="UdP-He-vKV" firstAttribute="top" secondItem="FNn-Qo-rHG" secondAttribute="bottom" constant="20" id="f9R-85-287"/>
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="previewImageView" destination="FNn-Qo-rHG" id="7Hb-SC-Vew"/>
                         <outlet property="progresssIndicator" destination="UdP-He-vKV" id="aoY-6W-anP"/>
                     </connections>
                 </viewController>

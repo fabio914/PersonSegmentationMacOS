@@ -76,13 +76,6 @@ final class ViewController: NSViewController {
             let segmentationViewController = self.storyboard?.instantiateController(withIdentifier: "SegmentationViewController") as? SegmentationViewController
             segmentationViewController?.segmentationWorker = segmentationWorker
             segmentationViewController.flatMap(presentAsSheet)
-
-//            let successAlert = NSAlert()
-//            successAlert.messageText = "Saved"
-//            successAlert.informativeText = "Saved to your Movies folder as \(outputURL.lastPathComponent)"
-//            successAlert.addButton(withTitle: "OK")
-//            successAlert.alertStyle = .informational
-//            successAlert.runModal()
         } catch {
             let alert = NSAlert()
             alert.messageText = "Error"
@@ -93,4 +86,3 @@ final class ViewController: NSViewController {
         }
     }
 }
-
