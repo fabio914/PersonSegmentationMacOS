@@ -55,14 +55,15 @@ extension SegmentationViewController: SegmentationWorkerDelegate {
         previewImageView.layer?.transform = CATransform3DMakeRotation(-(atan2(transform.b, transform.a)), 0, 0, 1)
     }
 
-    func segmentationDidFinish(_ worker: SegmentationWorker) {
+    func segmentation(_ worker: SegmentationWorker, didFinishWithOutput url: URL) {
         let successAlert = NSAlert()
         successAlert.messageText = "Saved"
-        successAlert.informativeText = "Saved to your Movies folder as \(worker.outputURL.lastPathComponent)"
+        successAlert.informativeText = "Saved to your Movies folder as \(url.lastPathComponent)"
         successAlert.addButton(withTitle: "OK")
         successAlert.alertStyle = .informational
         successAlert.runModal()
 
         dismiss(self)
+        NSWorkspace.shared.open(url)
     }
 }

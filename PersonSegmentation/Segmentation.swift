@@ -14,7 +14,7 @@ import Vision
 protocol SegmentationWorkerDelegate: AnyObject {
     func segmentation(_ worker: SegmentationWorker, didFailWithError: Error)
     func segmentation(_ worker: SegmentationWorker, didUpdateProgress: Double, preview: NSImage, transform: CGAffineTransform)
-    func segmentationDidFinish(_ worker: SegmentationWorker)
+    func segmentation(_ worker: SegmentationWorker, didFinishWithOutput url: URL)
 }
 
 enum SegmentationWorkerError: Error {
@@ -56,7 +56,7 @@ final class SegmentationWorker {
     }
 
     weak var delegate: SegmentationWorkerDelegate?
-    let outputURL: URL
+    private let outputURL: URL
 
     private(set) var isRunning: Bool = false
 
@@ -347,7 +347,7 @@ final class SegmentationWorker {
             outputWriter.finishWriting(completionHandler: { [weak self] in
                 DispatchQueue.main.async { [weak self] in
                     guard let self = self else { return }
-                    self.delegate?.segmentationDidFinish(self)
+                    self.delegate?.segmentation(self, didFinishWithOutput: self.outputURL)
                 }
             })
         case .unknown, .reading:
