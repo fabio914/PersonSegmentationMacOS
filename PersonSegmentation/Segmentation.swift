@@ -184,14 +184,22 @@ final class SegmentationWorker {
         cameraNode.position = .init(0, 0, 0)
         scene.rootNode.addChildNode(cameraNode)
 
-        let planeSize = CGSize(width: 2 * (videoSize.width/videoSize.height), height: 2)
+        let planeSize: CGSize
+
+        // Check this...
+        if videoTrack.naturalSize.width > videoTrack.naturalSize.height {
+            planeSize = CGSize(width: 2 * (videoTrack.naturalSize.width/videoTrack.naturalSize.height), height: 2)
+        } else {
+            planeSize = CGSize(width: 2, height: 2 * (videoTrack.naturalSize.height/videoTrack.naturalSize.width))
+        }
+
         let planeNode = Helpers.makePlane(size: planeSize, distance: 1)
 
         planeNode.geometry?.firstMaterial?.shaderModifiers = [
             .surface: Shaders.maskShader
         ]
 
-//        planeNode.eulerAngles.z = -videoRotation
+        planeNode.eulerAngles.z = -videoRotation
 
         cameraNode.addChildNode(planeNode)
         renderer.scene = scene
