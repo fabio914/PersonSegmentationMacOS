@@ -14,6 +14,7 @@
 		EF1DEFAE2736D7C300CE6975 /* Segmentation.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF1DEFAD2736D7C300CE6975 /* Segmentation.swift */; };
 		EF1DEFB02736DBB100CE6975 /* SegmentationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF1DEFAF2736DBB100CE6975 /* SegmentationViewController.swift */; };
 		EF1DEFB627371AC500CE6975 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = EF1DEFB527371AC500CE6975 /* README.md */; };
+		EF1DEFB92737482100CE6975 /* DragView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF1DEFB82737482100CE6975 /* DragView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -26,6 +27,7 @@
 		EF1DEFAD2736D7C300CE6975 /* Segmentation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Segmentation.swift; sourceTree = "<group>"; };
 		EF1DEFAF2736DBB100CE6975 /* SegmentationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SegmentationViewController.swift; sourceTree = "<group>"; };
 		EF1DEFB527371AC500CE6975 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		EF1DEFB82737482100CE6975 /* DragView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DragView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -59,6 +61,7 @@
 		EF1DEF9D2736C4B100CE6975 /* PersonSegmentation */ = {
 			isa = PBXGroup;
 			children = (
+				EF1DEFB72737481900CE6975 /* Views */,
 				EF1DEFB32736F95600CE6975 /* ViewControllers */,
 				EF1DEF9E2736C4B100CE6975 /* AppDelegate.swift */,
 				EF1DEFA22736C4B200CE6975 /* Assets.xcassets */,
@@ -76,6 +79,14 @@
 				EF1DEFAF2736DBB100CE6975 /* SegmentationViewController.swift */,
 			);
 			path = ViewControllers;
+			sourceTree = "<group>";
+		};
+		EF1DEFB72737481900CE6975 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				EF1DEFB82737482100CE6975 /* DragView.swift */,
+			);
+			path = Views;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -153,6 +164,7 @@
 				EF1DEFA12736C4B100CE6975 /* ViewController.swift in Sources */,
 				EF1DEF9F2736C4B100CE6975 /* AppDelegate.swift in Sources */,
 				EF1DEFAE2736D7C300CE6975 /* Segmentation.swift in Sources */,
+				EF1DEFB92737482100CE6975 /* DragView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

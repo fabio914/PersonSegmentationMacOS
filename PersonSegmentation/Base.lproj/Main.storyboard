@@ -88,31 +88,45 @@
             <objects>
                 <viewController id="XfG-lQ-9wD" customClass="ViewController" customModule="PersonSegmentation" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="m2S-Jp-Qdl">
-                        <rect key="frame" x="0.0" y="0.0" width="488" height="186"/>
+                        <rect key="frame" x="0.0" y="0.0" width="500" height="186"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <stackView distribution="fill" orientation="vertical" alignment="centerX" spacing="16" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="zdc-kJ-EMq">
-                                <rect key="frame" x="16" y="16" width="456" height="154"/>
+                                <rect key="frame" x="16" y="16" width="468" height="154"/>
                                 <subviews>
                                     <box title="Input video" titlePosition="belowTop" translatesAutoresizingMaskIntoConstraints="NO" id="C3U-nw-11R">
-                                        <rect key="frame" x="-3" y="88" width="462" height="68"/>
+                                        <rect key="frame" x="45" y="88" width="378" height="68"/>
                                         <view key="contentView" id="Csk-4D-kHw">
-                                            <rect key="frame" x="3" y="3" width="456" height="46"/>
+                                            <rect key="frame" x="3" y="3" width="372" height="46"/>
                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                             <subviews>
                                                 <stackView distribution="fill" orientation="horizontal" alignment="centerY" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="qE2-BI-PGI">
-                                                    <rect key="frame" x="8" y="8" width="440" height="30"/>
+                                                    <rect key="frame" x="8" y="8" width="356" height="30"/>
                                                     <subviews>
-                                                        <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" preferredMaxLayoutWidth="332" translatesAutoresizingMaskIntoConstraints="NO" id="XhD-W5-TtG">
-                                                            <rect key="frame" x="-2" y="7" width="336" height="16"/>
-                                                            <textFieldCell key="cell" lineBreakMode="truncatingTail" usesSingleLineMode="YES" id="yQt-pj-r4r">
-                                                                <font key="font" metaFont="system"/>
-                                                                <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
-                                                                <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
-                                                            </textFieldCell>
-                                                        </textField>
+                                                        <customView translatesAutoresizingMaskIntoConstraints="NO" id="ti2-oa-fTr" customClass="DragView" customModule="PersonSegmentation" customModuleProvider="target">
+                                                            <rect key="frame" x="0.0" y="0.0" width="248" height="30"/>
+                                                            <subviews>
+                                                                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" preferredMaxLayoutWidth="332" translatesAutoresizingMaskIntoConstraints="NO" id="XhD-W5-TtG">
+                                                                    <rect key="frame" x="-2" y="0.0" width="252" height="30"/>
+                                                                    <textFieldCell key="cell" lineBreakMode="truncatingTail" usesSingleLineMode="YES" id="yQt-pj-r4r">
+                                                                        <font key="font" metaFont="system"/>
+                                                                        <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                                                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                                                    </textFieldCell>
+                                                                </textField>
+                                                            </subviews>
+                                                            <constraints>
+                                                                <constraint firstItem="XhD-W5-TtG" firstAttribute="leading" secondItem="ti2-oa-fTr" secondAttribute="leading" id="1df-Jo-Bvo"/>
+                                                                <constraint firstItem="XhD-W5-TtG" firstAttribute="top" secondItem="ti2-oa-fTr" secondAttribute="top" id="6CW-TA-Ne4"/>
+                                                                <constraint firstAttribute="trailing" secondItem="XhD-W5-TtG" secondAttribute="trailing" id="ObP-9p-UxG"/>
+                                                                <constraint firstAttribute="bottom" secondItem="XhD-W5-TtG" secondAttribute="bottom" id="S6C-I2-w52"/>
+                                                            </constraints>
+                                                            <connections>
+                                                                <outlet property="delegate" destination="XfG-lQ-9wD" id="R4b-ty-YUp"/>
+                                                            </connections>
+                                                        </customView>
                                                         <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="PbF-iM-NrD">
-                                                            <rect key="frame" x="333" y="-2" width="114" height="32"/>
+                                                            <rect key="frame" x="249" y="-2" width="114" height="32"/>
                                                             <constraints>
                                                                 <constraint firstAttribute="width" constant="100" id="8nG-Ow-UfX"/>
                                                             </constraints>
@@ -147,7 +161,7 @@
                                         </view>
                                     </box>
                                     <stackView distribution="fill" orientation="horizontal" alignment="centerY" spacing="16" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Bah-ps-r10">
-                                        <rect key="frame" x="0.0" y="0.0" width="456" height="76"/>
+                                        <rect key="frame" x="48" y="0.0" width="372" height="76"/>
                                         <subviews>
                                             <box title="Background Color" titlePosition="belowTop" translatesAutoresizingMaskIntoConstraints="NO" id="Blt-nU-jN1">
                                                 <rect key="frame" x="-3" y="3" width="122" height="68"/>
@@ -205,7 +219,7 @@
                                                 </view>
                                             </box>
                                             <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="YGo-mG-bWU">
-                                                <rect key="frame" x="245" y="21" width="218" height="32"/>
+                                                <rect key="frame" x="245" y="21" width="134" height="32"/>
                                                 <buttonCell key="cell" type="push" title="Start processing" bezelStyle="rounded" alignment="center" borderStyle="border" inset="2" id="Fy2-Qm-1OP">
                                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                     <font key="font" metaFont="system"/>

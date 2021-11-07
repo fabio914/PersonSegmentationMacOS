@@ -86,3 +86,10 @@ final class ViewController: NSViewController {
         }
     }
 }
+
+extension ViewController: DragViewDelegate {
+
+    func dragView(_ view: DragView, didReceive fileURL: URL) {
+        self.inputFileURL = fileURL
+    }
+}
