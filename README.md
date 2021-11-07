@@ -4,8 +4,8 @@ Simple macOS app that applies Apple's Person Segmentation algorithm to a video.
 
 The output is always saved to `~/Movies`.
 
-<img src="Examples/screenshot-1.png" />
-<img src="Examples/screenshot-2.png" />
+<img src="Examples/screenshot-1.png" width="300" />
+<img src="Examples/screenshot-2.png" width="300" />
 
 ## Example
 
