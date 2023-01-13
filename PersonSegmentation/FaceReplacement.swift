@@ -259,13 +259,15 @@ final class FaceReplacementWorker {
             let containerNode = SCNNode()
             containerNode.position = .init(x: 0, y: 0, z: -1)
 
+            let scale = 1.5
+
             if let results = request.results, !results.isEmpty {
 
                 for result in results where result.confidence > 0.5 {
                     let boundingBox = result.boundingBox
 
                     let position = CGPoint(x: (boundingBox.midX - 0.5) * videoPlaneSize.width, y: (boundingBox.midY - 0.5) * videoPlaneSize.height)
-                    let size = CGSize(width: boundingBox.width * videoPlaneSize.width, height: boundingBox.height * videoPlaneSize.height)
+                    let size = CGSize(width: boundingBox.width * videoPlaneSize.width * scale, height: boundingBox.height * videoPlaneSize.height * scale)
 
                     let plane = SCNPlane(width: size.width, height: size.height)
 
