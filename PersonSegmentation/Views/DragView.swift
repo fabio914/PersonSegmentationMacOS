@@ -12,10 +12,11 @@ import Cocoa
 }
 
 // https://stackoverflow.com/a/60251731
+
 final class DragView: NSView {
 
     @IBOutlet weak var delegate: DragViewDelegate?
-    let fileExtensions: Set<String> = ["mp4", "mov"]
+    var fileExtensions: Set<String> = ["mp4", "mov"]
 
     required init?(coder: NSCoder) {
         super.init(coder: coder)

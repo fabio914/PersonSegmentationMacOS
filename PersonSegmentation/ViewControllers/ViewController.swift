@@ -11,19 +11,30 @@ final class ViewController: NSViewController {
 
     @IBOutlet private weak var pathLabel: NSTextField!
     @IBOutlet private weak var selectFileButton: NSButton!
+
+    @IBOutlet private weak var imagePathLabel: NSTextField!
+    @IBOutlet private weak var selectImageButton: NSButton!
     @IBOutlet private weak var startProcessingButton: NSButton!
 
-    @IBOutlet private weak var backgroundColorWell: NSColorWell!
-    @IBOutlet private weak var qualityPopUpButton: NSPopUpButton!
+    @IBOutlet private weak var videoDragView: DragView!
+    @IBOutlet private weak var imageDragView: DragView!
 
     private var inputFileURL: URL? {
         didSet {
             if let inputFileURL = inputFileURL {
                 pathLabel.stringValue = inputFileURL.path
-                startProcessingButton.isEnabled = true
             } else {
                 pathLabel.stringValue = "No selection"
-                startProcessingButton.isEnabled = false
+            }
+        }
+    }
+
+    private var imageFileURL: URL? {
+        didSet {
+            if let imageFileURL = imageFileURL {
+                imagePathLabel.stringValue = imageFileURL.path
+            } else {
+                imagePathLabel.stringValue = "No selection"
             }
         }
     }
@@ -31,6 +42,10 @@ final class ViewController: NSViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         inputFileURL = nil
+        imageFileURL = nil
+
+        videoDragView.fileExtensions = ["mov", "mp4"]
+        imageDragView.fileExtensions = ["jpg", "png"]
     }
 
     override var representedObject: Any? {
@@ -57,8 +72,24 @@ final class ViewController: NSViewController {
         }
     }
 
+    @IBAction func selectImageFile(_ sender: Any) {
+        let openPanel = NSOpenPanel()
+        openPanel.title = "Choose an image"
+        openPanel.showsResizeIndicator = true
+        openPanel.showsHiddenFiles = false
+        openPanel.allowsMultipleSelection = false
+        openPanel.canChooseDirectories = false
+        openPanel.allowedFileTypes = ["jpg", "png"]
+
+        let modalResponse = openPanel.runModal()
+
+        if case .OK = modalResponse, let selectedURL = openPanel.url {
+            self.imageFileURL = selectedURL
+        }
+    }
+
     @IBAction func startProcessing(_ sender: Any) {
-        guard let inputFileURL = inputFileURL else {
+        guard let inputFileURL, let imageFileURL else {
             return
         }
 
@@ -66,16 +97,15 @@ final class ViewController: NSViewController {
             let moviesDirectory = try FileManager.default.url(for: .moviesDirectory, in: .userDomainMask, appropriateFor: nil, create: false)
             let outputURL = moviesDirectory.appendingPathComponent("\(UUID().uuidString).mp4")
 
-            let segmentationWorker = try SegmentationWorker(
+            let faceReplacementWorker = try FaceReplacementWorker(
                 inputURL: inputFileURL,
                 outputURL: outputURL,
-                accuracy: .init(rawValue: qualityPopUpButton.indexOfSelectedItem) ?? .accurate,
-                backgroundColor: backgroundColorWell.color
+                imageURL: imageFileURL
             )
 
-            let segmentationViewController = self.storyboard?.instantiateController(withIdentifier: "SegmentationViewController") as? SegmentationViewController
-            segmentationViewController?.segmentationWorker = segmentationWorker
-            segmentationViewController.flatMap(presentAsSheet)
+            let faceReplacementViewController = self.storyboard?.instantiateController(withIdentifier: "FaceReplacementViewController") as? FaceReplacementViewController
+            faceReplacementViewController?.faceReplacementWorker = faceReplacementWorker
+            faceReplacementViewController.flatMap(presentAsSheet)
         } catch {
             let alert = NSAlert()
             alert.messageText = "Error"
@@ -90,6 +120,12 @@ final class ViewController: NSViewController {
 extension ViewController: DragViewDelegate {
 
     func dragView(_ view: DragView, didReceive fileURL: URL) {
-        self.inputFileURL = fileURL
+        guard let viewIdentifier = view.identifier else { return }
+
+        if viewIdentifier.rawValue == "InputVideo" {
+            self.inputFileURL = fileURL
+        } else if viewIdentifier.rawValue == "OverlayImage" {
+            self.imageFileURL = fileURL
+        }
     }
 }

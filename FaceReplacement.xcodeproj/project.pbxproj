@@ -15,10 +15,12 @@
 		EF1DEFB02736DBB100CE6975 /* SegmentationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF1DEFAF2736DBB100CE6975 /* SegmentationViewController.swift */; };
 		EF1DEFB627371AC500CE6975 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = EF1DEFB527371AC500CE6975 /* README.md */; };
 		EF1DEFB92737482100CE6975 /* DragView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF1DEFB82737482100CE6975 /* DragView.swift */; };
+		EF6781362970C91B0035E269 /* FaceReplacement.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF6781352970C91B0035E269 /* FaceReplacement.swift */; };
+		EF6781382970CEDE0035E269 /* FaceReplacementViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF6781372970CEDE0035E269 /* FaceReplacementViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		EF1DEF9B2736C4B100CE6975 /* PersonSegmentation.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PersonSegmentation.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		EF1DEF9B2736C4B100CE6975 /* FaceReplacement.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FaceReplacement.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		EF1DEF9E2736C4B100CE6975 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		EF1DEFA02736C4B100CE6975 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		EF1DEFA22736C4B200CE6975 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -28,6 +30,8 @@
 		EF1DEFAF2736DBB100CE6975 /* SegmentationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SegmentationViewController.swift; sourceTree = "<group>"; };
 		EF1DEFB527371AC500CE6975 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		EF1DEFB82737482100CE6975 /* DragView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DragView.swift; sourceTree = "<group>"; };
+		EF6781352970C91B0035E269 /* FaceReplacement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FaceReplacement.swift; sourceTree = "<group>"; };
+		EF6781372970CEDE0035E269 /* FaceReplacementViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FaceReplacementViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -53,7 +57,7 @@
 		EF1DEF9C2736C4B100CE6975 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				EF1DEF9B2736C4B100CE6975 /* PersonSegmentation.app */,
+				EF1DEF9B2736C4B100CE6975 /* FaceReplacement.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -68,6 +72,7 @@
 				EF1DEFA42736C4B200CE6975 /* Main.storyboard */,
 				EF1DEFA72736C4B200CE6975 /* PersonSegmentation.entitlements */,
 				EF1DEFAD2736D7C300CE6975 /* Segmentation.swift */,
+				EF6781352970C91B0035E269 /* FaceReplacement.swift */,
 			);
 			path = PersonSegmentation;
 			sourceTree = "<group>";
@@ -77,6 +82,7 @@
 			children = (
 				EF1DEFA02736C4B100CE6975 /* ViewController.swift */,
 				EF1DEFAF2736DBB100CE6975 /* SegmentationViewController.swift */,
+				EF6781372970CEDE0035E269 /* FaceReplacementViewController.swift */,
 			);
 			path = ViewControllers;
 			sourceTree = "<group>";
@@ -92,9 +98,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		EF1DEF9A2736C4B100CE6975 /* PersonSegmentation */ = {
+		EF1DEF9A2736C4B100CE6975 /* FaceReplacement */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = EF1DEFAA2736C4B200CE6975 /* Build configuration list for PBXNativeTarget "PersonSegmentation" */;
+			buildConfigurationList = EF1DEFAA2736C4B200CE6975 /* Build configuration list for PBXNativeTarget "FaceReplacement" */;
 			buildPhases = (
 				EF1DEF972736C4B100CE6975 /* Sources */,
 				EF1DEF982736C4B100CE6975 /* Frameworks */,
@@ -104,9 +110,9 @@
 			);
 			dependencies = (
 			);
-			name = PersonSegmentation;
+			name = FaceReplacement;
 			productName = PersonSegmentation;
-			productReference = EF1DEF9B2736C4B100CE6975 /* PersonSegmentation.app */;
+			productReference = EF1DEF9B2736C4B100CE6975 /* FaceReplacement.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -124,7 +130,7 @@
 					};
 				};
 			};
-			buildConfigurationList = EF1DEF962736C4B100CE6975 /* Build configuration list for PBXProject "PersonSegmentation" */;
+			buildConfigurationList = EF1DEF962736C4B100CE6975 /* Build configuration list for PBXProject "FaceReplacement" */;
 			compatibilityVersion = "Xcode 13.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -137,7 +143,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				EF1DEF9A2736C4B100CE6975 /* PersonSegmentation */,
+				EF1DEF9A2736C4B100CE6975 /* FaceReplacement */,
 			);
 		};
 /* End PBXProject section */
@@ -161,9 +167,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				EF1DEFB02736DBB100CE6975 /* SegmentationViewController.swift in Sources */,
+				EF6781362970C91B0035E269 /* FaceReplacement.swift in Sources */,
 				EF1DEFA12736C4B100CE6975 /* ViewController.swift in Sources */,
 				EF1DEF9F2736C4B100CE6975 /* AppDelegate.swift in Sources */,
 				EF1DEFAE2736D7C300CE6975 /* Segmentation.swift in Sources */,
+				EF6781382970CEDE0035E269 /* FaceReplacementViewController.swift in Sources */,
 				EF1DEFB92737482100CE6975 /* DragView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -317,7 +325,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.bluenose.PersonSegmentation;
+				PRODUCT_BUNDLE_IDENTIFIER = com.bluenose.FaceReplacement;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -344,7 +352,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.bluenose.PersonSegmentation;
+				PRODUCT_BUNDLE_IDENTIFIER = com.bluenose.FaceReplacement;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -354,7 +362,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		EF1DEF962736C4B100CE6975 /* Build configuration list for PBXProject "PersonSegmentation" */ = {
+		EF1DEF962736C4B100CE6975 /* Build configuration list for PBXProject "FaceReplacement" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				EF1DEFA82736C4B200CE6975 /* Debug */,
@@ -363,7 +371,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		EF1DEFAA2736C4B200CE6975 /* Build configuration list for PBXNativeTarget "PersonSegmentation" */ = {
+		EF1DEFAA2736C4B200CE6975 /* Build configuration list for PBXNativeTarget "FaceReplacement" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				EF1DEFAB2736C4B200CE6975 /* Debug */,
